@@ -70,39 +70,8 @@ export default function ContentTracker() {
             setContent(response.data)
         } catch (error) {
             console.error('Failed to fetch content:', error)
-            // Mock data
-            setContent([
-                {
-                    id: '1',
-                    url: '/blog/ai-trends-2024',
-                    title: 'AI Trends for 2024',
-                    content_type: 'blog',
-                    word_count: 1500,
-                    readability_score: 72,
-                    has_changed: true,
-                    last_checked: new Date().toISOString()
-                },
-                {
-                    id: '2',
-                    url: '/pricing',
-                    title: 'Pricing Plans',
-                    content_type: 'pricing',
-                    word_count: 800,
-                    readability_score: 85,
-                    has_changed: false,
-                    last_checked: new Date(Date.now() - 86400000).toISOString()
-                },
-                {
-                    id: '3',
-                    url: '/products/enterprise',
-                    title: 'Enterprise Solution',
-                    content_type: 'product',
-                    word_count: 2000,
-                    readability_score: 68,
-                    has_changed: true,
-                    last_checked: new Date(Date.now() - 3600000).toISOString()
-                }
-            ])
+            // Show empty state - no mock data
+            setContent([])
         } finally {
             setLoading(false)
         }

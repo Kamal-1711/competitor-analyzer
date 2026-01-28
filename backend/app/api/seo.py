@@ -192,12 +192,24 @@ async def trigger_seo_analysis(
     if not competitor:
         raise HTTPException(status_code=404, detail="Competitor not found")
     
-    # TODO: Trigger Celery task for SEO analysis
+    # Run SEO analysis
+    from app.services.seo_analyzer import SeoAnalyzer
     
-    return {
-        "message": "SEO analysis triggered",
-        "competitor_id": str(competitor_id)
-    }
+    try:
+        analyzer = SeoAnalyzer()
+        analysis_result = await analyzer.analyze(competitor.url, competitor_id)
+        
+        # Update competitor SEO score
+        competitor.seo_score = analysis_result["overall_score"]
+        await db.commit()
+        
+        return {
+            "message": "SEO analysis completed",
+            "competitor_id": str(competitor_id),
+            "overall_score": analysis_result["overall_score"]
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"SEO analysis failed: {str(e)}")
 
 
 @router.get("/{competitor_id}/audit", response_model=List[SeoScoreCard])

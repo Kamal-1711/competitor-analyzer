@@ -83,31 +83,8 @@ export default function SeoAnalyzer() {
             void auditRes.data
         } catch (error) {
             console.error('Failed to fetch SEO data:', error)
-            // Mock data
-            setAnalysis({
-                overall_score: 72,
-                title: 'Example Company - Leading Solutions Provider',
-                title_score: 85,
-                meta_description: 'We provide innovative solutions...',
-                meta_description_score: 70,
-                h1_count: 1,
-                h2_count: 5,
-                headers_score: 90,
-                word_count: 1500,
-                content_score: 75,
-                total_images: 12,
-                images_with_alt: 8,
-                images_score: 67,
-                internal_links: 25,
-                external_links: 8,
-                links_score: 80,
-                has_ssl: true,
-                has_sitemap: true,
-                has_robots_txt: true,
-                has_canonical: true,
-                has_schema_markup: false,
-                technical_score: 85
-            })
+            // Show empty state - no mock data
+            setAnalysis(null)
         } finally {
             setLoading(false)
         }

@@ -31,33 +31,8 @@ export default function ActivityFeed({ limit }: { limit?: number }) {
                 setActivities(response.data)
             } catch (error) {
                 console.error('Failed to fetch activities:', error)
-                // Mock data matching reference
-                setActivities([
-                    {
-                        id: '1',
-                        type: 'content_update',
-                        title: 'New Article Published',
-                        description: '10 Tips for Better SEO Ranking',
-                        competitor_name: 'Edgarallan',
-                        timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString()
-                    },
-                    {
-                        id: '2',
-                        type: 'price_change',
-                        title: 'Price Changed',
-                        description: 'Pro Plan increased by $10',
-                        competitor_name: 'Brix Templates',
-                        timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString()
-                    },
-                    {
-                        id: '3',
-                        type: 'content_update',
-                        title: 'Homepage Updated',
-                        description: 'Hero section text modified',
-                        competitor_name: 'Flowbase',
-                        timestamp: new Date(Date.now() - 1000 * 60 * 300).toISOString()
-                    }
-                ])
+                // Show empty state - no mock data
+                setActivities([])
             } finally {
                 setLoading(false)
             }

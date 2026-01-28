@@ -57,14 +57,14 @@ export default function Dashboard() {
                 setScanProgress(scanRes.data)
             } catch (error) {
                 console.error('Failed to fetch dashboard data:', error)
-                // Fallback mock data matching image
+                // Show zero values - no mock data
                 setMetrics({
-                    total_competitors: { value: 6, label: 'Total Competitors' },
+                    total_competitors: { value: 0, label: 'Total Competitors' },
                     changes_24h: { value: 0, change: 0, change_direction: 'neutral' },
-                    active_monitors: { value: 1 },
+                    active_monitors: { value: 0 },
                     critical_alerts: { value: 0 }
                 })
-                setHealthScore({ overall_score: 72, strengths: 3, neutrals: 1, weaknesses: 1 })
+                setHealthScore({ overall_score: 0, strengths: 0, neutrals: 0, weaknesses: 0 })
             } finally {
                 setLoading(false)
             }

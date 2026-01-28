@@ -65,13 +65,35 @@ async def get_dashboard_metrics(db: AsyncSession = Depends(get_db)):
     total_competitors = total_result.scalar() or 0
     
     # Changes in last 24 hours
-    yesterday = datetime.utcnow() - timedelta(hours=24)
+    now = datetime.utcnow()
+    yesterday = now - timedelta(hours=24)
+    day_before = now - timedelta(hours=48)
+    
     changes_result = await db.execute(
         select(func.count(ContentChange.id)).where(
             ContentChange.detected_at >= yesterday
         )
     )
     changes_24h = changes_result.scalar() or 0
+    
+    # Changes in previous 24 hours (for comparison)
+    prev_changes_result = await db.execute(
+        select(func.count(ContentChange.id)).where(
+            and_(
+                ContentChange.detected_at >= day_before,
+                ContentChange.detected_at < yesterday
+            )
+        )
+    )
+    prev_changes = prev_changes_result.scalar() or 0
+    
+    # Calculate percentage change
+    if prev_changes > 0:
+        change_percent = round(((changes_24h - prev_changes) / prev_changes) * 100, 1)
+        change_direction = "up" if change_percent > 0 else ("down" if change_percent < 0 else "neutral")
+    else:
+        change_percent = 0.0 if changes_24h == 0 else 100.0
+        change_direction = "neutral" if changes_24h == 0 else "up"
     
     # Active monitors (running scans)
     active_result = await db.execute(
@@ -100,8 +122,8 @@ async def get_dashboard_metrics(db: AsyncSession = Depends(get_db)):
         changes_24h=MetricCard(
             label="Changes (24h)",
             value=changes_24h,
-            change=15.2,  # TODO: Calculate actual change
-            change_direction="up",
+            change=abs(change_percent),
+            change_direction=change_direction,
             icon="activity"
         ),
         active_monitors=MetricCard(

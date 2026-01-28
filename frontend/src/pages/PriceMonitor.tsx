@@ -28,14 +28,11 @@ export default function PriceMonitor() {
         pricesApi.get(selectedCompetitor).then(res => {
             setPrices(res.data)
             if (res.data.length) setSelectedProduct(res.data[0].product_name)
-        }).catch(() => {
-            const mock = [
-                { id: '1', product_name: 'Pro Plan', price: 49, original_price: 59, currency: 'USD', is_on_sale: true, discount_percent: 17 },
-                { id: '2', product_name: 'Enterprise', price: 199, original_price: null, currency: 'USD', is_on_sale: false, discount_percent: null },
-            ]
-            setPrices(mock)
-            setSelectedProduct(mock[0].product_name)
-            setChartData([{ date: 'Jan 1', price: 59 }, { date: 'Jan 15', price: 49 }, { date: 'Jan 29', price: 49 }])
+        }).catch((error) => {
+            console.error('Failed to fetch prices:', error)
+            // Show empty state - no mock data
+            setPrices([])
+            setChartData([])
         }).finally(() => setLoading(false))
     }, [selectedCompetitor])
 
