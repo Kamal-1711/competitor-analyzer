@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+backend/venv/
+backend/env/
+backend/.venv/
+
+# Environment files
+.env
+.env.local
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+
+# Data & Cache
+data/
+*.db
+.cache/
+
+# Build & Coverage
+dist/
+build/
+backend/dist/
+backend/build/
+backend/*.egg-info/
+.coverage
+htmlcov/
+
+# Python specific
+__pycache__/
+*.py[cod]
+*$py.class
