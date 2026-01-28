@@ -34,8 +34,8 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     return (
         <div className={`
             fixed inset-y-0 left-0 z-50 flex w-64 flex-col glass-card rounded-l-none border-y-0 border-l-0 border-r border-glass-border
-            transition-all duration-300 ease-in-out lg:translate-x-0
-            ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            transition-all duration-300 ease-in-out
+            ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
             <div className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4">
                 {/* Logo */}
@@ -47,7 +47,7 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                         <span className="text-xl font-bold text-white tracking-tight">Web Spy</span>
                     </div>
                     <button
-                        className="text-gray-400 hover:text-white transition-colors lg:hidden"
+                        className="text-gray-400 hover:text-white transition-colors"
                         onClick={() => setIsOpen(false)}
                     >
                         <ChevronLeft className="w-5 h-5" />

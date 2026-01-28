@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom'
 
 interface HeaderProps {
     setSidebarOpen: (open: boolean) => void
+    sidebarOpen: boolean
 }
 
-export default function Header({ setSidebarOpen }: HeaderProps) {
+export default function Header({ setSidebarOpen, sidebarOpen }: HeaderProps) {
     const [alertCount, setAlertCount] = useState(0)
 
     useEffect(() => {
@@ -29,13 +30,15 @@ export default function Header({ setSidebarOpen }: HeaderProps) {
     return (
         <header className="sticky top-0 z-40 bg-transparent mb-6">
             <div className="flex h-16 items-center justify-between gap-6">
-                {/* Mobile menu button */}
-                <button
-                    className="lg:hidden p-2 rounded-xl hover:bg-white/10 text-white transition-colors"
-                    onClick={() => setSidebarOpen(true)}
-                >
-                    <Menu className="h-6 w-6" />
-                </button>
+                {/* Menu button - visible when sidebar is closed */}
+                {!sidebarOpen && (
+                    <button
+                        className="p-2 rounded-xl hover:bg-white/10 text-white transition-colors"
+                        onClick={() => setSidebarOpen(true)}
+                    >
+                        <Menu className="h-6 w-6" />
+                    </button>
+                )}
 
                 {/* Project Selector (Dropdown) */}
                 <div className="hidden md:flex items-center">
