@@ -1,4 +1,4 @@
-import { MoreVertical, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
 import { Link } from 'react-router-dom'
 

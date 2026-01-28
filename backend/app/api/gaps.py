@@ -46,26 +46,27 @@ async def get_gap_summary(
     db: AsyncSession = Depends(get_db)
 ):
     """Get overall gap analysis summary."""
+    from app.services.gap_finder import GapFinder
     
-    # Count unique features across all competitors
-    feature_result = await db.execute(
-        select(func.count(func.distinct(ProductFeature.feature_name)))
+    # Fetch all active competitor IDs
+    result = await db.execute(
+        select(Competitor.id).where(Competitor.is_active == True)
     )
-    total_features = feature_result.scalar() or 0
+    competitor_ids = [row[0] for row in result.fetchall()]
     
-    # Count content topics
-    content_result = await db.execute(
-        select(func.count(Content.id))
-        .where(Content.content_type == ContentType.BLOG)
-    )
-    total_content = content_result.scalar() or 0
+    if not competitor_ids:
+        return GapSummary(
+            feature_gaps=0,
+            content_gaps=0,
+            keyword_opportunities=0,
+            overall_opportunity_score=100
+        )
     
-    return GapSummary(
-        feature_gaps=min(total_features, 10),  # Placeholder
-        content_gaps=min(total_content // 5, 15),  # Placeholder
-        keyword_opportunities=25,  # Placeholder
-        overall_opportunity_score=72  # Placeholder
-    )
+    # Use real GapFinder service
+    finder = GapFinder()
+    summary = await finder.calculate_opportunity_summary(None, competitor_ids, db)
+    
+    return GapSummary(**summary)
 
 
 @router.get("/features", response_model=List[FeatureGap])

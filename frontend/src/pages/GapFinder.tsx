@@ -23,15 +23,21 @@ export default function GapFinder() {
                 setFeatures(featRes.data)
                 setKeywords(kwRes.data)
                 setPositioning(posRes.data.data || [])
-            }).catch(() => {
-                setSummary({ feature_gaps: 8, content_gaps: 12, keyword_opportunities: 25, overall_opportunity_score: 72 })
-                setFeatures([{ feature_name: 'AI Integration', your_status: 'Missing', competitors: { 'CompA': 'Present', 'CompB': 'Present' } }])
-                setKeywords([{ keyword: 'ai automation', competitors_ranking: ['CompA', 'CompB'], opportunity_score: 85 }])
-                setPositioning([{ name: 'CompA', x: 75, y: 80, size: 70 }, { name: 'CompB', x: 60, y: 65, size: 55 }, { name: 'You', x: 45, y: 50, size: 60 }])
+            }).catch((err) => {
+                console.error('Failed to fetch gap data:', err)
+                // Leave state empty — UI will show empty state
             }).finally(() => setLoading(false))
     }, [])
 
     if (loading) return <div className="flex justify-center h-96"><RefreshCw className="w-8 h-8 text-accent-purple animate-spin" /></div>
+
+    if (!summary) return (
+        <div className="glass-card p-12 rounded-2xl text-center">
+            <Target className="w-16 h-16 text-white/20 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-2">No gap analysis yet</h3>
+            <p className="text-white/50">Add and scan competitors to generate gap insights</p>
+        </div>
+    )
 
     return (
         <div className="space-y-6">
