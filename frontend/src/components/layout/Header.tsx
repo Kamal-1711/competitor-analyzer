@@ -3,7 +3,11 @@ import { Bell, Search, Menu, Plus, RefreshCw, ChevronDown } from 'lucide-react'
 import { api } from '../../services/api'
 import { Link } from 'react-router-dom'
 
-export default function Header() {
+interface HeaderProps {
+    setSidebarOpen: (open: boolean) => void
+}
+
+export default function Header({ setSidebarOpen }: HeaderProps) {
     const [alertCount, setAlertCount] = useState(0)
 
     useEffect(() => {
@@ -26,7 +30,10 @@ export default function Header() {
         <header className="sticky top-0 z-40 bg-transparent mb-6">
             <div className="flex h-16 items-center justify-between gap-6">
                 {/* Mobile menu button */}
-                <button className="lg:hidden p-2 rounded-xl hover:bg-white/10 text-white transition-colors">
+                <button
+                    className="lg:hidden p-2 rounded-xl hover:bg-white/10 text-white transition-colors"
+                    onClick={() => setSidebarOpen(true)}
+                >
                     <Menu className="h-6 w-6" />
                 </button>
 

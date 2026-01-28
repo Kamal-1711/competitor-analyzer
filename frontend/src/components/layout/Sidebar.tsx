@@ -25,9 +25,18 @@ const navigation = [
     { name: 'Reports', href: '/reports', icon: FileBarChart },
 ]
 
-export default function Sidebar() {
+interface SidebarProps {
+    isOpen: boolean
+    setIsOpen: (open: boolean) => void
+}
+
+export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     return (
-        <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-64 lg:flex-col glass-card rounded-l-none border-y-0 border-l-0 border-r border-glass-border">
+        <div className={`
+            fixed inset-y-0 left-0 z-50 flex w-64 flex-col glass-card rounded-l-none border-y-0 border-l-0 border-r border-glass-border
+            transition-all duration-300 ease-in-out lg:translate-x-0
+            ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}>
             <div className="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4">
                 {/* Logo */}
                 <div className="flex h-16 shrink-0 items-center justify-between mt-2">
@@ -37,7 +46,10 @@ export default function Sidebar() {
                         </div>
                         <span className="text-xl font-bold text-white tracking-tight">Web Spy</span>
                     </div>
-                    <button className="text-gray-400 hover:text-white transition-colors">
+                    <button
+                        className="text-gray-400 hover:text-white transition-colors lg:hidden"
+                        onClick={() => setIsOpen(false)}
+                    >
                         <ChevronLeft className="w-5 h-5" />
                     </button>
                 </div>
