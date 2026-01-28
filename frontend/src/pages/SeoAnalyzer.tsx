@@ -39,7 +39,7 @@ interface SeoAnalysis {
     headers_score: number
     word_count: number
     content_score: number
-    total_images: number
+    images_count: number  // Changed from total_images
     images_with_alt: number
     images_score: number
     internal_links: number
@@ -47,9 +47,9 @@ interface SeoAnalysis {
     links_score: number
     has_ssl: boolean
     has_sitemap: boolean
-    has_robots_txt: boolean
+    has_robots_meta: boolean  // Changed from has_robots_txt
     has_canonical: boolean
-    has_schema_markup: boolean
+    mobile_friendly: boolean  // Changed from has_schema_markup
     technical_score: number
     analyzed_at?: string
 }
@@ -158,10 +158,7 @@ export default function SeoAnalyzer() {
         if (!analysis.has_sitemap) {
             insights.push({ type: 'warning', message: 'Sitemap.xml not found - important for crawling', priority: 2 })
         }
-        if (!analysis.has_schema_markup) {
-            insights.push({ type: 'warning', message: 'No schema markup detected - add structured data', priority: 2 })
-        }
-        if (analysis.has_ssl && analysis.has_sitemap && analysis.has_robots_txt) {
+        if (analysis.has_ssl && analysis.has_sitemap && analysis.has_robots_meta) {
             insights.push({ type: 'success', message: 'Technical SEO fundamentals are solid', priority: 3 })
         }
 
@@ -180,8 +177,8 @@ export default function SeoAnalyzer() {
         }
 
         // Images
-        if (analysis.total_images > 0 && analysis.images_with_alt < analysis.total_images) {
-            const missing = analysis.total_images - analysis.images_with_alt
+        if (analysis.images_count > 0 && analysis.images_with_alt < analysis.images_count) {
+            const missing = analysis.images_count - analysis.images_with_alt
             insights.push({ type: 'warning', message: `${missing} images missing alt text`, priority: 2 })
         }
 
@@ -328,7 +325,7 @@ export default function SeoAnalyzer() {
                             { label: 'Meta', score: analysis.meta_description_score, icon: FileText, detail: `${analysis.meta_description?.length || 0} chars` },
                             { label: 'Headers', score: analysis.headers_score, icon: Code, detail: `${analysis.h1_count} H1, ${analysis.h2_count} H2` },
                             { label: 'Content', score: analysis.content_score, icon: FileText, detail: `${analysis.word_count.toLocaleString()} words` },
-                            { label: 'Images', score: analysis.images_score, icon: Image, detail: `${analysis.images_with_alt}/${analysis.total_images} alt` },
+                            { label: 'Images', score: analysis.images_score, icon: Image, detail: `${analysis.images_with_alt}/${analysis.images_count} alt` },
                             { label: 'Links', score: analysis.links_score, icon: Link2, detail: `${analysis.internal_links} int, ${analysis.external_links} ext` },
                         ].map((item) => (
                             <div
@@ -404,9 +401,9 @@ export default function SeoAnalyzer() {
                                 {[
                                     { label: 'SSL Certificate', value: analysis.has_ssl, icon: Shield },
                                     { label: 'Sitemap.xml', value: analysis.has_sitemap, icon: FileText },
-                                    { label: 'Robots.txt', value: analysis.has_robots_txt, icon: FileText },
+                                    { label: 'Robots.txt', value: analysis.has_robots_meta, icon: FileText },
                                     { label: 'Canonical Tag', value: analysis.has_canonical, icon: Link2 },
-                                    { label: 'Schema Markup', value: analysis.has_schema_markup, icon: Code },
+                                    { label: 'Mobile Friendly', value: analysis.mobile_friendly, icon: Code },
                                 ].map((item) => (
                                     <div key={item.label} className={clsx(
                                         "flex items-center justify-between p-4 rounded-xl border transition-colors",
@@ -438,7 +435,7 @@ export default function SeoAnalyzer() {
                             <div className="flex items-center justify-between mb-6">
                                 <div>
                                     <div className="text-4xl font-bold text-white">{analysis.images_with_alt}</div>
-                                    <div className="text-white/50">of {analysis.total_images} with alt text</div>
+                                    <div className="text-white/50">of {analysis.images_count} with alt text</div>
                                 </div>
                                 <div className={clsx(
                                     "w-20 h-20 rounded-full flex flex-col items-center justify-center border-4",
@@ -458,7 +455,7 @@ export default function SeoAnalyzer() {
                                             analysis.images_score >= 60 ? "bg-gradient-to-r from-amber-500 to-amber-400" :
                                                 "bg-gradient-to-r from-rose-500 to-rose-400"
                                     )}
-                                    style={{ width: `${analysis.total_images > 0 ? (analysis.images_with_alt / analysis.total_images) * 100 : 100}%` }}
+                                    style={{ width: `${analysis.images_count > 0 ? (analysis.images_with_alt / analysis.images_count) * 100 : 100}%` }}
                                 />
                             </div>
                         </div>

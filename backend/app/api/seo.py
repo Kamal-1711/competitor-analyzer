@@ -28,47 +28,45 @@ class SeoAnalysisResponse(BaseModel):
     overall_score: int
     
     # On-page
-    title: Optional[str]
-    title_length: int
-    title_score: int
-    meta_description: Optional[str]
-    meta_description_length: int
-    meta_description_score: int
+    title: Optional[str] = None
+    title_length: Optional[int] = 0
+    title_score: int = 0
+    meta_description: Optional[str] = None
+    meta_description_length: Optional[int] = 0
+    meta_description_score: int = 0
     
     # Headers
-    h1_count: int
-    h2_count: int
-    h3_count: int
-    headers_score: int
+    h1_count: int = 0
+    h2_count: int = 0
+    h3_count: int = 0
+    headers_score: int = 0
     
     # Content
-    word_count: int
-    content_score: int
+    word_count: int = 0
+    content_score: int = 0
     
-    # Images
-    total_images: int
-    images_with_alt: int
-    images_score: int
+    # Images (DB uses images_count, not total_images)
+    images_count: int = 0
+    images_with_alt: int = 0
+    images_score: int = 0
     
     # Links
-    internal_links: int
-    external_links: int
-    broken_links: int
-    links_score: int
+    internal_links: int = 0
+    external_links: int = 0
+    broken_links: int = 0
+    links_score: int = 0
     
-    # Technical
-    has_ssl: bool
-    has_sitemap: bool
-    has_robots_txt: bool
-    has_canonical: bool
-    has_schema_markup: bool
-    is_mobile_friendly: bool
-    technical_score: int
+    # Technical (DB uses has_robots_meta and mobile_friendly, not has_robots_txt/is_mobile_friendly)
+    has_ssl: bool = False
+    has_sitemap: bool = False
+    has_robots_meta: bool = False
+    has_canonical: bool = False
+    mobile_friendly: bool = False
+    technical_score: int = 0
     
-    # Performance
-    page_load_time_ms: Optional[int]
-    page_size_kb: Optional[int]
-    performance_score: int
+    # Performance (DB uses load_time_ms and page_size_bytes)
+    load_time_ms: Optional[int] = None
+    page_size_bytes: Optional[int] = None
     
     analyzed_at: datetime
     
