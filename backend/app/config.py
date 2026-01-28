@@ -11,11 +11,13 @@ class Settings(BaseSettings):
     debug: bool = True
     
     # Database - individual components (Supabase web-spy)
-    db_host: str = "aws-0-ap-south-1.pooler.supabase.com"
+    db_host: str = "aws-1-ap-south-1.pooler.supabase.com"
     db_port: int = 5432
     db_name: str = "postgres"
     db_user: str = "postgres.vbjbywbuiwnqjdftbdfb"
     db_password: str
+    db_ssl_verify: bool = True
+    db_auto_create: bool = False
     
     @computed_field
     @property

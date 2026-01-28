@@ -4,6 +4,7 @@ from sqlalchemy import MetaData, text
 from sqlalchemy.pool import NullPool
 from loguru import logger
 import sys
+import ssl
 
 from app.config import settings
 
@@ -25,12 +26,22 @@ class Base(DeclarativeBase):
 
 def _create_engine():
     """Create database engine - using NullPool for Supabase compatibility."""
+    ssl_ctx = ssl.create_default_context()
+    if not settings.db_ssl_verify:
+        # Some corporate networks MITM TLS with a custom root CA.
+        # This disables cert verification so local dev can connect.
+        ssl_ctx.check_hostname = False
+        ssl_ctx.verify_mode = ssl.CERT_NONE
+
     # Use NullPool to avoid connection pooling issues with Supabase
     # Each request gets a fresh connection that's properly closed after
     engine = create_async_engine(
         settings.database_url,
         echo=settings.debug,
         poolclass=NullPool,  # No pooling - new connection per request
+        # Supabase Postgres requires TLS/SSL
+        # Supabase pooler (pgbouncer) can break prepared statements; disable asyncpg statement cache.
+        connect_args={"ssl": ssl_ctx, "statement_cache_size": 0},
     )
     
     session_maker = async_sessionmaker(
@@ -78,6 +89,13 @@ async def init_db():
         async with eng.connect() as conn:
             result = await conn.execute(text("SELECT 1"))
             result.fetchone()
+
+        # Optionally create tables (useful for first-time Supabase setup)
+        if getattr(settings, "db_auto_create", False):
+            # Ensure models are imported so Base.metadata is populated
+            import app.models  # noqa: F401
+            async with eng.begin() as conn:
+                await conn.run_sync(Base.metadata.create_all)
             
         logger.info("Database connection established successfully")
         
