@@ -33,9 +33,9 @@ export default function Sidebar() {
                 <div className="flex h-16 shrink-0 items-center justify-between mt-2">
                     <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-gradient-mesh flex items-center justify-center shadow-glow-purple">
-                            <span className="text-white font-bold text-lg">C</span>
+                            <span className="text-white font-bold text-lg">W</span>
                         </div>
-                        <span className="text-xl font-bold text-white tracking-tight">CompetelQ</span>
+                        <span className="text-xl font-bold text-white tracking-tight">Web Spy</span>
                     </div>
                     <button className="text-gray-400 hover:text-white transition-colors">
                         <ChevronLeft className="w-5 h-5" />
