@@ -13,11 +13,11 @@ interface MetricCardProps {
 }
 
 const colorStyles = {
-    gray: { bg: 'bg-white/10', text: 'text-gray-300' },
-    blue: { bg: 'bg-blue-500/10', text: 'text-blue-400' },
-    green: { bg: 'bg-green-500/10', text: 'text-green-400' },
-    yellow: { bg: 'bg-yellow-500/10', text: 'text-yellow-400' },
-    red: { bg: 'bg-red-500/10', text: 'text-red-400' }
+    gray: { bg: 'bg-white/5', text: 'text-gray-400', ring: 'ring-gray-500/20' },
+    blue: { bg: 'bg-blue-500/10', text: 'text-blue-400', ring: 'ring-blue-500/20' },
+    green: { bg: 'bg-emerald-500/10', text: 'text-emerald-400', ring: 'ring-emerald-500/20' },
+    yellow: { bg: 'bg-amber-500/10', text: 'text-amber-400', ring: 'ring-amber-500/20' },
+    red: { bg: 'bg-rose-500/10', text: 'text-rose-400', ring: 'ring-rose-500/20' }
 }
 
 export default function MetricCard({
@@ -33,38 +33,46 @@ export default function MetricCard({
 
     return (
         <div className={clsx(
-            "glass-card-hover p-6 relative overflow-hidden group",
-            alert && "ring-1 ring-red-500/50 shadow-glow-red"
+            "glass-card-hover p-6 group relative",
+            alert && "ring-1 ring-rose-500/50 shadow-[0_0_20px_rgba(244,63,94,0.15)]"
         )}>
-            <div className="flex justify-between items-start mb-4">
+            <div className="glass-shine opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+            <div className="flex justify-between items-start mb-4 relative z-10">
                 <div className="flex-1">
-                    <p className="text-gray-400 text-sm font-medium mb-1">{label}</p>
+                    <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1.5">{label}</p>
                     <h3 className="text-3xl font-bold text-white tracking-tight">{value}</h3>
                 </div>
                 <div className={clsx(
-                    "p-3 rounded-xl transition-transform duration-300 group-hover:scale-110",
+                    "p-3.5 rounded-2xl transition-all duration-300 group-hover:scale-110",
                     styles.bg,
-                    styles.text
+                    styles.text,
+                    "ring-1 inset", styles.ring
                 )}>
                     {icon}
                 </div>
             </div>
 
             {change !== undefined && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 relative z-10">
                     <div className={clsx(
-                        "flex items-center text-xs font-bold px-2.5 py-1 rounded-lg",
-                        changeDirection === 'up' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                        "flex items-center text-xs font-bold px-2.5 py-1 rounded-full border",
+                        changeDirection === 'up'
+                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                            : 'bg-rose-500/10 text-rose-400 border-rose-500/20'
                     )}>
                         {changeDirection === 'up' ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                         {Math.abs(change)}%
                     </div>
-                    <span className="text-xs text-gray-500">vs yesterday</span>
+                    <span className="text-xs text-gray-500 font-medium">vs yesterday</span>
                 </div>
             )}
 
             {alert && (
-                <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-glow-red" />
+                <span className="absolute top-3 right-3 flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+                </span>
             )}
         </div>
     )

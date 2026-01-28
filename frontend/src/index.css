@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 /* Base styles */
-/* Base styles */
 :root {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
@@ -11,10 +10,13 @@
 
   /* Premium Dark Theme */
   color-scheme: dark;
-  --bg-body: #0a0a0f;
-  --text-primary: #ffffff;
+  --bg-body: #030305; /* Deeper black for higher contrast */
+  --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --border-color: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-surface: rgba(15, 15, 20, 0.6);
+  --glow-primary: rgba(139, 92, 246, 0.5);
+  --glow-secondary: rgba(59, 130, 246, 0.5);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -28,235 +30,111 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   background-color: var(--bg-body);
+  /* refined mesh gradient */
   background-image:
-    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 60%),
+    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 60%),
+    radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.05) 0px, transparent 60%);
   background-attachment: fixed;
   color: var(--text-primary);
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Minimal */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(59, 130, 246, 0.5);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.7);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Components */
 @layer components {
+  /* Deep Glass - The core premium tile style */
   .glass-card {
-    @apply bg-white border border-gray-100 rounded-xl shadow-sm;
+    @apply bg-dark-900/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/5 shadow-xl relative overflow-hidden;
+    /* Inner light highlight */
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   }
 
   .glass-card-hover {
-    @apply glass-card transition-all duration-200 hover:shadow-md hover:border-blue-100;
+    @apply glass-card transition-all duration-300 hover:bg-white/5 hover:border-white/10 hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-0.5;
   }
 
-  .btn-primary {
-    @apply px-4 py-2 rounded-lg font-medium text-white bg-blue-600 transition-all duration-200 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2;
+  /* Text Styles */
+  .text-glow {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
   }
-
-  .btn-secondary {
-    @apply px-4 py-2 rounded-lg font-medium text-gray-700 bg-white border border-gray-200 transition-all duration-200 hover:bg-gray-50 hover:border-gray-300 active:scale-95 flex items-center justify-center gap-2;
-  }
-
-  .input-search {
-    @apply w-full px-4 py-2 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 outline-none transition-all duration-200 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10;
-  }
-
-  .nav-item {
-    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200;
-  }
-
-  .nav-item-active {
-    @apply bg-blue-50 text-blue-600;
-  }
-
-  .nav-item-inactive {
-    @apply text-gray-600 hover:bg-gray-50 hover:text-gray-900;
-  }
-}
-
-/* Animations */
-@keyframes scan {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.animate-scan {
-  animation: scan 2s linear infinite;
-}
-
-/* Gauge Chart Helper */
-.gauge-bg {
-  stroke: #e5e7eb;
-}
-
-.gauge-fill {
-  transition: stroke-dashoffset 1s ease-in-out;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.5);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.7);
-}
-
-/* Glass morphism components */
-@layer components {
-  .glass-card {
-    @apply bg-glass-white backdrop-blur-xl border border-glass-border rounded-2xl;
-  }
-
-  .glass-card-hover {
-    @apply glass-card transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:shadow-glow-purple;
-  }
-
+  
   .gradient-text {
-    @apply bg-gradient-mesh bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent;
   }
 
-  .gradient-border {
-    @apply relative;
-  }
-
-  .gradient-border::before {
-    content: '';
-    @apply absolute inset-0 rounded-2xl p-[1px] bg-gradient-mesh;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
-
+  /* Buttons */
   .btn-primary {
-    @apply px-6 py-3 rounded-xl font-semibold text-white bg-gradient-mesh transition-all duration-300 hover:shadow-glow-purple hover:scale-105 active:scale-95;
+    @apply px-5 py-2.5 rounded-xl font-medium text-white bg-gradient-to-r from-violet-600 to-indigo-600 shadow-lg shadow-indigo-500/25 border border-white/10 transition-all duration-300 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2;
   }
 
   .btn-secondary {
-    @apply px-6 py-3 rounded-xl font-semibold text-white glass-card transition-all duration-300 hover:bg-white/10 active:scale-95;
+    @apply px-5 py-2.5 rounded-xl font-medium text-gray-300 bg-white/5 border border-white/5 transition-all duration-300 hover:bg-white/10 hover:text-white hover:border-white/10 active:scale-95 flex items-center justify-center gap-2 backdrop-blur-md;
   }
 
+  /* Inputs */
   .input-glass {
-    @apply w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 outline-none transition-all duration-300 focus:border-accent-purple focus:ring-2 focus:ring-accent-purple/30;
+    @apply w-full px-4 py-2.5 rounded-xl bg-black/20 border border-white/10 text-white placeholder-gray-500 outline-none transition-all duration-300 focus:bg-black/40 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50;
   }
 
+  /* Badges */
   .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border backdrop-blur-md;
   }
-
-  .badge-success {
-    @apply badge bg-accent-green/20 text-accent-green border border-accent-green/30;
-  }
-
-  .badge-warning {
-    @apply badge bg-accent-orange/20 text-accent-orange border border-accent-orange/30;
-  }
-
-  .badge-danger {
-    @apply badge bg-accent-red/20 text-accent-red border border-accent-red/30;
-  }
-
-  .badge-info {
-    @apply badge bg-accent-blue/20 text-accent-blue border border-accent-blue/30;
-  }
-
-  .badge-purple {
-    @apply badge bg-accent-purple/20 text-accent-purple border border-accent-purple/30;
-  }
+  
+  .badge-purple { @apply bg-purple-500/10 text-purple-300 border-purple-500/20; }
+  .badge-blue { @apply bg-blue-500/10 text-blue-300 border-blue-500/20; }
+  .badge-green { @apply bg-emerald-500/10 text-emerald-300 border-emerald-500/20; }
+  .badge-yellow { @apply bg-amber-500/10 text-amber-300 border-amber-500/20; }
+  .badge-red { @apply bg-rose-500/10 text-rose-300 border-rose-500/20; }
 }
 
 /* Animations */
 @keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-
-  100% {
-    background-position: 200% 0;
-  }
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-.shimmer {
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.1) 50%,
-      rgba(255, 255, 255, 0) 100%);
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
 
-/* Glow effects */
-.glow-purple {
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
 
-.glow-blue {
-  box-shadow: 0 0 30px rgba(59, 130, 246, 0.4);
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
-.glow-cyan {
-  box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
-}
+/* Gauge Chart Helper */
+.gauge-bg { stroke: rgba(255, 255, 255, 0.1); }
+.gauge-fill { transition: stroke-dashoffset 1s ease-in-out; }
 
-/* Mesh gradient background */
-.mesh-gradient-bg {
-  background:
-    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
-    radial-gradient(at 0% 100%, rgba(236, 72, 153, 0.1) 0px, transparent 50%);
-}
-
-/* Progress bar animation */
-.progress-bar-animated::after {
-  content: '';
+/* Utility for glass sheen effect */
+.glass-shine {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg,
-      transparent,
-      rgba(255, 255, 255, 0.3),
-      transparent);
-  animation: scan 2s ease-in-out infinite;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.0) 50%);
+  pointer-events: none;
 }

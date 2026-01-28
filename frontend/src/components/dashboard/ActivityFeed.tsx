@@ -52,29 +52,43 @@ export default function ActivityFeed({ limit }: { limit?: number }) {
     return (
         <div className="space-y-2">
             {activities.length > 0 ? (
-                activities.map((activity) => {
+                activities.map((activity, index) => {
                     const style = activityStyles[activity.type] || activityStyles.default
                     const Icon = style.icon
 
                     return (
-                        <div key={activity.id} className="flex gap-4 p-4 hover:bg-white/5 rounded-xl transition-colors cursor-pointer group border border-transparent hover:border-white/5">
-                            <div className={clsx("w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-white/5 shadow-inner", style.bg, style.text)}>
-                                <Icon className="w-5 h-5" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start">
-                                    <h4 className="text-sm font-semibold text-gray-200 truncate group-hover:text-white transition-colors">
-                                        {activity.title}
-                                    </h4>
-                                    <span className="text-xs text-gray-500 whitespace-nowrap ml-2">
-                                        {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
-                                    </span>
+                        <div key={activity.id} className="group relative">
+                            {/* Connecting Line (except last item) */}
+                            {index !== activities.length - 1 && (
+                                <div className="absolute left-[26px] top-12 bottom-[-16px] w-px bg-white/5 z-0" />
+                            )}
+
+                            <div className="flex gap-4 p-4 rounded-2xl transition-all duration-300 hover:bg-white/5 border border-transparent hover:border-white/5 cursor-pointer relative z-10">
+                                <div className={clsx(
+                                    "w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border shadow-lg transition-transform group-hover:scale-105",
+                                    style.bg,
+                                    style.text,
+                                    "border-white/10"
+                                )}>
+                                    <Icon className="w-5 h-5 drop-shadow-md" />
                                 </div>
-                                <p className="text-sm text-gray-400 truncate mt-0.5">{activity.description}</p>
-                                <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                    <span className="w-1 h-1 rounded-full bg-gray-600" />
-                                    {activity.competitor_name}
-                                </p>
+                                <div className="flex-1 min-w-0 pt-1">
+                                    <div className="flex justify-between items-start mb-1">
+                                        <h4 className="text-sm font-semibold text-gray-200 truncate group-hover:text-white group-hover:text-glow transition-all">
+                                            {activity.title}
+                                        </h4>
+                                        <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider bg-white/5 px-2 py-0.5 rounded-full whitespace-nowrap ml-2">
+                                            {formatDistanceToNow(new Date(activity.timestamp), { addSuffix: true })}
+                                        </span>
+                                    </div>
+                                    <p className="text-sm text-gray-400 leading-relaxed mb-2">{activity.description}</p>
+                                    <div className="flex items-center gap-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
+                                        <p className="text-xs font-semibold text-gray-400 group-hover:text-indigo-400 transition-colors">
+                                            {activity.competitor_name}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     )
