@@ -52,6 +52,89 @@ class PriceComparison(BaseModel):
     prices: dict  # competitor_name -> price
 
 
+class PriceScanResult(BaseModel):
+    new: int
+    updated: int
+    unchanged: int
+    message: str
+
+
+@router.post("/{competitor_id}/scan", response_model=PriceScanResult)
+async def scan_competitor_prices(
+    competitor_id: UUID,
+    db: AsyncSession = Depends(get_db)
+):
+    """Scan a competitor's website for pricing information."""
+    from app.services.crawler import PlaywrightCrawler
+    from app.services.price_monitor import PriceMonitor
+    from app.models.competitor import Competitor
+    
+    # Get competitor
+    result = await db.execute(
+        select(Competitor).where(Competitor.id == competitor_id)
+    )
+    competitor = result.scalar_one_or_none()
+    
+    if not competitor:
+        raise HTTPException(status_code=404, detail="Competitor not found")
+    
+    # Initialize services
+    crawler = PlaywrightCrawler()
+    price_monitor = PriceMonitor()
+    
+    total_results = {'new': 0, 'updated': 0, 'unchanged': 0}
+    
+    try:
+        # First try the main URL
+        scan_result = await crawler.quick_scan(competitor.url)
+        
+        if scan_result and scan_result.get('html'):
+            results = await price_monitor.process_prices(
+                competitor_id, competitor.url, scan_result['html'], db
+            )
+            total_results['new'] += results.get('new', 0)
+            total_results['updated'] += results.get('updated', 0)
+            total_results['unchanged'] += results.get('unchanged', 0)
+        
+        # Also try common pricing page URLs
+        pricing_paths = ['/pricing', '/prices', '/plans', '/products', '/services']
+        base_url = competitor.url.rstrip('/')
+        
+        for path in pricing_paths:
+            try:
+                pricing_url = f"{base_url}{path}"
+                scan_result = await crawler.quick_scan(pricing_url)
+                
+                if scan_result and scan_result.get('html') and scan_result.get('status_code') == 200:
+                    results = await price_monitor.process_prices(
+                        competitor_id, pricing_url, scan_result['html'], db
+                    )
+                    total_results['new'] += results.get('new', 0)
+                    total_results['updated'] += results.get('updated', 0)
+                    total_results['unchanged'] += results.get('unchanged', 0)
+            except Exception as e:
+                # Skip pages that don't exist
+                pass
+        
+        total_found = total_results['new'] + total_results['updated'] + total_results['unchanged']
+        
+        if total_found == 0:
+            return PriceScanResult(
+                new=0,
+                updated=0,
+                unchanged=0,
+                message="No pricing information found. This website may not display public pricing."
+            )
+        
+        return PriceScanResult(
+            **total_results,
+            message=f"Found {total_found} price(s): {total_results['new']} new, {total_results['updated']} updated"
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Price scan failed: {str(e)}")
+
+
 @router.get("/{competitor_id}", response_model=List[PriceItem])
 async def get_competitor_prices(
     competitor_id: UUID,

@@ -29,15 +29,23 @@ class PriceMonitor:
         'GBP': 'GBP',
     }
     
-    # Price regex patterns
+    # Price regex patterns (order matters - more specific first)
     PRICE_PATTERNS = [
-        # $99.99, €99,99, £99.99
-        r'[\$€£¥₹]\s*(\d{1,3}(?:[,.\s]?\d{3})*(?:[.,]\d{2})?)',
+        # $99.99, €99,99, £99.99 (with decimals)
+        r'[\$€£¥₹]\s*(\d{1,3}(?:[,.\s]?\d{3})*(?:[.,]\d{2}))',
+        # $99, €99, £99 (simple integers with currency symbol)
+        r'[\$€£¥₹]\s*(\d{1,6})',
         # 99.99 USD, 99,99 EUR
         r'(\d{1,3}(?:[,.\s]?\d{3})*(?:[.,]\d{2})?)\s*(?:USD|EUR|GBP|JPY|INR)',
-        # /mo, /month, /year pricing
-        r'[\$€£]\s*(\d+(?:[.,]\d{2})?)\s*(?:/mo|/month|per month)',
-        r'[\$€£]\s*(\d+(?:[.,]\d{2})?)\s*(?:/yr|/year|per year)',
+        # /mo, /month, /year pricing (SaaS style)
+        r'[\$€£]\s*(\d+(?:[.,]\d{2})?)\s*(?:/mo|/month|/mon|per\s*month)',
+        r'[\$€£]\s*(\d+(?:[.,]\d{2})?)\s*(?:/yr|/year|per\s*year|annually)',
+        # Starting at $X, From $X patterns
+        r'(?:starting|from|starts)\s*(?:at|@)?\s*[\$€£]\s*(\d+(?:[.,]\d{2})?)',
+        # Price: $X, Cost: $X patterns  
+        r'(?:price|cost|fee)[:=]?\s*[\$€£]\s*(\d+(?:[.,]\d{2})?)',
+        # X per user, X per seat patterns
+        r'[\$€£]\s*(\d+(?:[.,]\d{2})?)\s*(?:per\s*(?:user|seat|license|month|year))',
     ]
     
     # Discount patterns
@@ -45,6 +53,7 @@ class PriceMonitor:
         r'(\d+)\s*%\s*off',
         r'save\s*(\d+)\s*%',
         r'(\d+)\s*%\s*discount',
+        r'(\d+)\s*%\s*savings',
     ]
     
     def __init__(self):
@@ -90,7 +99,7 @@ class PriceMonitor:
         soup = BeautifulSoup(html, "lxml")
         prices = []
         
-        # Look for common pricing elements
+        # Look for common pricing elements (expanded for SaaS/B2B)
         pricing_selectors = [
             '[class*="price"]',
             '[class*="Price"]',
@@ -98,6 +107,17 @@ class PriceMonitor:
             '[class*="amount"]',
             '[data-price]',
             '[itemprop="price"]',
+            # SaaS/B2B pricing patterns
+            '[class*="plan"]',
+            '[class*="Plan"]',
+            '[class*="tier"]',
+            '[class*="Tier"]',
+            '[class*="pricing"]',
+            '[class*="Pricing"]',
+            '[class*="subscription"]',
+            '[class*="package"]',
+            '[class*="fee"]',
+            '[class*="rate"]',
         ]
         
         found_elements = set()

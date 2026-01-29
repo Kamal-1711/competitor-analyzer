@@ -74,6 +74,7 @@ export const contentApi = {
 
 export const pricesApi = {
     get: (competitorId: string) => api.get(`/prices/${competitorId}`),
+    scan: (competitorId: string) => api.post(`/prices/${competitorId}/scan`),
     getHistory: (competitorId: string, productName: string, days = 30) =>
         api.get(`/prices/${competitorId}/history?product_name=${productName}&days=${days}`),
     compare: (productName: string, ids?: string[]) =>
