@@ -98,6 +98,7 @@ class PlaywrightCrawler:
                 return {
                     "url": url,
                     "title": title,
+                    "html": html,  # Add HTML for price extraction
                     "word_count": len(text.split()),
                     "load_time_ms": int(load_time),
                     "status_code": response.status if response else None,

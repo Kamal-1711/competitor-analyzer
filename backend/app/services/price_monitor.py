@@ -266,13 +266,15 @@ class PriceMonitor:
                     if abs(change_percent) >= self.price_change_threshold * 100:
                         change_type = PriceChangeType.INCREASE if change_percent > 0 else PriceChangeType.DECREASE
                         
-                        # Create price alert
+                        # Create price alert using correct schema
                         price_alert = PriceAlert(
-                            price_id=new_price.id,
-                            change_type=change_type,
+                            competitor_id=competitor_id,
+                            product_name=price_data['product_name'],
+                            change_type=change_type.value,
                             old_price=old_price,
                             new_price=new_price_val,
-                            change_percent=Decimal(str(round(change_percent, 2)))
+                            change_percentage=Decimal(str(round(change_percent, 2))),
+                            url=price_data['source_url']
                         )
                         db.add(price_alert)
                         
@@ -281,13 +283,11 @@ class PriceMonitor:
                         
                         alert = Alert(
                             competitor_id=competitor_id,
-                            alert_type=AlertType.PRICE_CHANGE,
-                            severity=severity,
+                            alert_type=AlertType.PRICE_CHANGE.value,
+                            severity=severity.value,
                             title=f"Price {'Increased' if change_percent > 0 else 'Decreased'}: {price_data['product_name'][:50]}",
                             message=f"Price changed from ${old_price} to ${new_price_val} ({change_percent:+.1f}%)",
-                            related_url=price_data['source_url'],
-                            related_entity_id=str(new_price.id),
-                            related_entity_type="price"
+                            related_url=price_data['source_url']
                         )
                         db.add(alert)
                         
@@ -303,13 +303,15 @@ class PriceMonitor:
                 else:
                     results['unchanged'] += 1
             else:
-                # New product
+                # New product - create price alert
                 price_alert = PriceAlert(
-                    price_id=new_price.id,
-                    change_type=PriceChangeType.NEW,
+                    competitor_id=competitor_id,
+                    product_name=price_data['product_name'],
+                    change_type=PriceChangeType.NEW.value,
                     old_price=None,
                     new_price=price_data['price'],
-                    change_percent=None
+                    change_percentage=None,
+                    url=price_data['source_url']
                 )
                 db.add(price_alert)
                 results['new'] += 1

@@ -30,16 +30,17 @@ class PriceHistory(Base):
         nullable=False
     )
     
-    url: Mapped[str] = mapped_column(String(2048), nullable=False)
     product_name: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    product_url: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
     price: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     currency: Mapped[str] = mapped_column(String(10), default="USD")
     original_price: Mapped[Optional[Decimal]] = mapped_column(Numeric(12, 2), nullable=True)
-    discount_percentage: Mapped[Optional[Decimal]] = mapped_column(Numeric(5, 2), nullable=True)
+    discount_percent: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    promotion_text: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     is_on_sale: Mapped[bool] = mapped_column(Boolean, default=False)
     
     # Timestamps
-    recorded_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    captured_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     
     # Relationships
     competitor: Mapped["Competitor"] = relationship("Competitor", back_populates="prices")
@@ -66,7 +67,7 @@ class PriceAlert(Base):
     old_price: Mapped[Optional[Decimal]] = mapped_column(Numeric(12, 2), nullable=True)
     new_price: Mapped[Optional[Decimal]] = mapped_column(Numeric(12, 2), nullable=True)
     change_type: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
-    change_percentage: Mapped[Optional[Decimal]] = mapped_column(Numeric(5, 2), nullable=True)
+    change_percentage: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
     url: Mapped[Optional[str]] = mapped_column(String(2048), nullable=True)
     is_read: Mapped[bool] = mapped_column(Boolean, default=False)
     
